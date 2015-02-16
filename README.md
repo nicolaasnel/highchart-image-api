@@ -3,14 +3,14 @@
 Rails API for generating highchart charts on the server side.  Useful for embedding highcharts into emails or anywhere else where
 javascript is not an option. Leverages the highchart-convert.js script as outlined developed [here](http://www.highcharts.com/component/content/article/2-news/52-serverside-generated-charts).
 
-Requires ruby 1.9.3 and phantomjs.
+Requires jruby 1.7.19 and phantomjs.
 
 ## Getting Started Locally
 
 Clone the project
 
 ```bash
-git clone git://github.com/kbaum/highchart-image-api.git
+git clone git://github.com/nicolaasnel/highchart-image-api.git
 ```
 
 Install gems
