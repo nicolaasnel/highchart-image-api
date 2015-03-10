@@ -42,13 +42,6 @@ Or optionally with width:
 curl -X POST -d "input=$HIGHCHART_OBJECT&width=900" http://localhost:3000/chart_images -o ./chart.png
 ```
 
-
-## Deploying to Heroku
-  
-This project is made to deploy to heroku.  It is using the [heroku-buildingpack-multi](https://github.com/ddollar/heroku-buildpack-multi)
-depending including both phantomjs and ruby.  Just create a new project within heroku 
-and push it like you know how.
-
 ## Calling API from ruby
 
 Using [httparty](https://github.com/jnunemaker/httparty):
