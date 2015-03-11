@@ -1,17 +1,15 @@
 source 'https://rubygems.org'
 
-#ruby '2.1.2'
-
 gem 'rails', '>=3.2.11'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+gem 'json', '1.8.2'
 gem 'rails-api'
 gem 'active_attr'
-gem 'puma'
-gem 'activerecord-jdbcsqlite3-adapter'
-gem 'sqlite3', '1.3.7',    platforms: :ruby
+gem 'unicorn',              '~> 4.8.3'
+gem 'sqlite3', '1.3.10',    platforms: :ruby
 
 group :production do
   gem 'rpm_contrib'
