@@ -1,2 +1,51 @@
 <h1>HighchartImageApi</h1>
 <h3>If you are seeing this, it means your web service is up, yay!</h3>
+
+<p>Rails API for generating highchart charts on the server side.  Useful for embedding highcharts into emails or anywhere else where
+javascript is not an option. Leverages the highchart-convert.js script as outlined developed <a href="http://www.highcharts.com/component/content/article/2-news/52-serverside-generated-charts">here</a>.</p>
+
+<p>Requires Ruby 2.2.0 and phantomjs.</p>
+
+<h2>
+<a id="user-content-getting-started-locally" class="anchor" href="#getting-started-locally" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started Locally</h2>
+
+<p>Clone the project</p>
+
+<div class="highlight highlight-bash"><pre>git clone git://github.com/nicolaasnel/highchart-image-api.git</pre></div>
+
+<p>Install gems</p>
+
+<div class="highlight highlight-bash"><pre><span class="pl-s3">cd</span> highchart-image-api
+gem install bundler
+bundle</pre></div>
+
+<p>Install phantomjs</p>
+
+<div class="highlight highlight-bash"><pre>gem install brew
+brew install phantomjs</pre></div>
+
+<p>Start up the server</p>
+
+<div class="highlight highlight-bash"><pre>rails server</pre></div>
+
+<p>Generate a chart using curl</p>
+
+<div class="highlight highlight-bash"><pre>HIGHCHART_OBJECT=<span class="pl-s1"><span class="pl-pds">`</span>cat ./spec/fixtures/input.json<span class="pl-pds">`</span></span>
+curl -X POST -d <span class="pl-s1"><span class="pl-pds">"</span>input=<span class="pl-vo">$HIGHCHART_OBJECT</span><span class="pl-pds">"</span></span> http://localhost:3000/chart_images -o ./chart.png</pre></div>
+
+<p>Or optionally with width:</p>
+
+<div class="highlight highlight-bash"><pre>curl -X POST -d <span class="pl-s1"><span class="pl-pds">"</span>input=<span class="pl-vo">$HIGHCHART_OBJECT</span>&amp;width=900<span class="pl-pds">"</span></span> http://localhost:3000/chart_images -o ./chart.png</pre></div>
+
+<h2>
+<a id="user-content-calling-api-from-ruby" class="anchor" href="#calling-api-from-ruby" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calling API from ruby</h2>
+
+<p>Using <a href="https://github.com/jnunemaker/httparty">httparty</a>:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-k">require</span> <span class="pl-s1"><span class="pl-pds">'</span>httparty<span class="pl-pds">'</span></span>
+
+chart_object_js <span class="pl-k">=</span> <span class="pl-s3">File</span>.read(<span class="pl-s1"><span class="pl-pds">'</span>spec/fixtures/input.json<span class="pl-pds">'</span></span>)
+response <span class="pl-k">=</span> <span class="pl-s3">HTTParty</span>.post(<span class="pl-s1"><span class="pl-pds">'</span>http://localhost:3000/chart_images<span class="pl-pds">'</span></span>, <span class="pl-c1">body:</span> {<span class="pl-c1">input:</span> chart_object_js, <span class="pl-c1">width:</span><span class="pl-c1">550</span>})
+<span class="pl-s3">File</span>.open(<span class="pl-s1"><span class="pl-pds">'</span>./chart.png<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>wb<span class="pl-pds">'</span></span>){ |<span class="pl-vo">file</span>| file <span class="pl-k">&lt;&lt;</span> response.body }</pre></div>
+
+<p>Where chart_object_js is a <a href="/nicolaasnel/highchart-image-api/blob/master/spec/fixtures/input.json">string value</a> that can be passed into the Highcharts.Chart constructor.</p>
