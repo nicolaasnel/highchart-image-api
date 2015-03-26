@@ -1,241 +1,51 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Ruby on Rails: Welcome aboard</title>
-    <style type="text/css" media="screen">
-      body {
-        margin: 0;
-        margin-bottom: 25px;
-        padding: 0;
-        background-color: #f0f0f0;
-        font-family: "Lucida Grande", "Bitstream Vera Sans", "Verdana";
-        font-size: 13px;
-        color: #333;
-      }
+<h1>HighchartImageApi</h1>
+<h3>If you are seeing this, it means your web service is up, yay!</h3>
 
-      h1 {
-        font-size: 28px;
-        color: #000;
-      }
+<p>Rails API for generating highchart charts on the server side.  Useful for embedding highcharts into emails or anywhere else where
+javascript is not an option. Leverages the highchart-convert.js script as outlined developed <a href="http://www.highcharts.com/component/content/article/2-news/52-serverside-generated-charts">here</a>.</p>
 
-      a  {color: #03c}
-      a:hover {
-        background-color: #03c;
-        color: white;
-        text-decoration: none;
-      }
+<p>Requires Ruby 2.2.0 and phantomjs.</p>
 
+<h2>
+<a id="user-content-getting-started-locally" class="anchor" href="#getting-started-locally" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started Locally</h2>
 
-      #page {
-        background-color: #f0f0f0;
-        width: 750px;
-        margin: 0;
-        margin-left: auto;
-        margin-right: auto;
-      }
+<p>Clone the project</p>
 
-      #content {
-        float: left;
-        background-color: white;
-        border: 3px solid #aaa;
-        border-top: none;
-        padding: 25px;
-        width: 500px;
-      }
+<div class="highlight highlight-bash"><pre>git clone git://github.com/nicolaasnel/highchart-image-api.git</pre></div>
 
-      #sidebar {
-        float: right;
-        width: 175px;
-      }
+<p>Install gems</p>
 
-      #footer {
-        clear: both;
-      }
+<div class="highlight highlight-bash"><pre><span class="pl-s3">cd</span> highchart-image-api
+gem install bundler
+bundle</pre></div>
 
-      #header, #about, #getting-started {
-        padding-left: 75px;
-        padding-right: 30px;
-      }
+<p>Install phantomjs</p>
 
+<div class="highlight highlight-bash"><pre>gem install brew
+brew install phantomjs</pre></div>
 
-      #header {
-        background-image: url("assets/rails.png");
-        background-repeat: no-repeat;
-        background-position: top left;
-        height: 64px;
-      }
-      #header h1, #header h2 {margin: 0}
-      #header h2 {
-        color: #888;
-        font-weight: normal;
-        font-size: 16px;
-      }
+<p>Start up the server</p>
 
+<div class="highlight highlight-bash"><pre>rails server</pre></div>
 
-      #about h3 {
-        margin: 0;
-        margin-bottom: 10px;
-        font-size: 14px;
-      }
+<p>Generate a chart using curl</p>
 
-      #about-content {
-        background-color: #ffd;
-        border: 1px solid #fc0;
-        margin-left: -55px;
-        margin-right: -10px;
-      }
-      #about-content table {
-        margin-top: 10px;
-        margin-bottom: 10px;
-        font-size: 11px;
-        border-collapse: collapse;
-      }
-      #about-content td {
-        padding: 10px;
-        padding-top: 3px;
-        padding-bottom: 3px;
-      }
-      #about-content td.name  {color: #555}
-      #about-content td.value {color: #000}
+<div class="highlight highlight-bash"><pre>HIGHCHART_OBJECT=<span class="pl-s1"><span class="pl-pds">`</span>cat ./spec/fixtures/input.json<span class="pl-pds">`</span></span>
+curl -X POST -d <span class="pl-s1"><span class="pl-pds">"</span>input=<span class="pl-vo">$HIGHCHART_OBJECT</span><span class="pl-pds">"</span></span> http://localhost:3000/chart_images -o ./chart.png</pre></div>
 
-      #about-content ul {
-        padding: 0;
-        list-style-type: none;
-      }
+<p>Or optionally with width:</p>
 
-      #about-content.failure {
-        background-color: #fcc;
-        border: 1px solid #f00;
-      }
-      #about-content.failure p {
-        margin: 0;
-        padding: 10px;
-      }
+<div class="highlight highlight-bash"><pre>curl -X POST -d <span class="pl-s1"><span class="pl-pds">"</span>input=<span class="pl-vo">$HIGHCHART_OBJECT</span>&amp;width=900<span class="pl-pds">"</span></span> http://localhost:3000/chart_images -o ./chart.png</pre></div>
 
+<h2>
+<a id="user-content-calling-api-from-ruby" class="anchor" href="#calling-api-from-ruby" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calling API from ruby</h2>
 
-      #getting-started {
-        border-top: 1px solid #ccc;
-        margin-top: 25px;
-        padding-top: 15px;
-      }
-      #getting-started h1 {
-        margin: 0;
-        font-size: 20px;
-      }
-      #getting-started h2 {
-        margin: 0;
-        font-size: 14px;
-        font-weight: normal;
-        color: #333;
-        margin-bottom: 25px;
-      }
-      #getting-started ol {
-        margin-left: 0;
-        padding-left: 0;
-      }
-      #getting-started li {
-        font-size: 18px;
-        color: #888;
-        margin-bottom: 25px;
-      }
-      #getting-started li h2 {
-        margin: 0;
-        font-weight: normal;
-        font-size: 18px;
-        color: #333;
-      }
-      #getting-started li p {
-        color: #555;
-        font-size: 13px;
-      }
+<p>Using <a href="https://github.com/jnunemaker/httparty">httparty</a>:</p>
 
+<div class="highlight highlight-ruby"><pre><span class="pl-k">require</span> <span class="pl-s1"><span class="pl-pds">'</span>httparty<span class="pl-pds">'</span></span>
 
-      #sidebar ul {
-        margin-left: 0;
-        padding-left: 0;
-      }
-      #sidebar ul h3 {
-        margin-top: 25px;
-        font-size: 16px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #ccc;
-      }
-      #sidebar li {
-        list-style-type: none;
-      }
-      #sidebar ul.links li {
-        margin-bottom: 5px;
-      }
+chart_object_js <span class="pl-k">=</span> <span class="pl-s3">File</span>.read(<span class="pl-s1"><span class="pl-pds">'</span>spec/fixtures/input.json<span class="pl-pds">'</span></span>)
+response <span class="pl-k">=</span> <span class="pl-s3">HTTParty</span>.post(<span class="pl-s1"><span class="pl-pds">'</span>http://localhost:3000/chart_images<span class="pl-pds">'</span></span>, <span class="pl-c1">body:</span> {<span class="pl-c1">input:</span> chart_object_js, <span class="pl-c1">width:</span><span class="pl-c1">550</span>})
+<span class="pl-s3">File</span>.open(<span class="pl-s1"><span class="pl-pds">'</span>./chart.png<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>wb<span class="pl-pds">'</span></span>){ |<span class="pl-vo">file</span>| file <span class="pl-k">&lt;&lt;</span> response.body }</pre></div>
 
-      .filename {
-        font-style: italic;
-      }
-    </style>
-    <script type="text/javascript">
-      function about() {
-        info = document.getElementById('about-content');
-        if (window.XMLHttpRequest)
-          { xhr = new XMLHttpRequest(); }
-        else
-          { xhr = new ActiveXObject("Microsoft.XMLHTTP"); }
-        xhr.open("GET","rails/info/properties",false);
-        xhr.send("");
-        info.innerHTML = xhr.responseText;
-        info.style.display = 'block'
-      }
-    </script>
-  </head>
-  <body>
-    <div id="page">
-      <div id="sidebar">
-        <ul id="sidebar-items">
-          <li>
-            <h3>Browse the documentation</h3>
-            <ul class="links">
-              <li><a href="http://guides.rubyonrails.org/">Rails Guides</a></li>
-              <li><a href="http://api.rubyonrails.org/">Rails API</a></li>
-              <li><a href="http://www.ruby-doc.org/core/">Ruby core</a></li>
-              <li><a href="http://www.ruby-doc.org/stdlib/">Ruby standard library</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-
-      <div id="content">
-        <div id="header">
-          <h1>Welcome aboard</h1>
-          <h2>You&rsquo;re riding Ruby on Rails!</h2>
-        </div>
-
-        <div id="about">
-          <h3><a href="rails/info/properties" onclick="about(); return false">About your application&rsquo;s environment</a></h3>
-          <div id="about-content" style="display: none"></div>
-        </div>
-
-        <div id="getting-started">
-          <h1>Getting started</h1>
-          <h2>Here&rsquo;s how to get rolling:</h2>
-
-          <ol>
-            <li>
-              <h2>Use <code>rails generate</code> to create your models and controllers</h2>
-              <p>To see all available options, run it without parameters.</p>
-            </li>
-
-            <li>
-              <h2>Set up a default route and remove <span class="filename">public/index.html</span></h2>
-              <p>Routes are set up in <span class="filename">config/routes.rb</span>.</p>
-            </li>
-
-            <li>
-              <h2>Create your database</h2>
-              <p>Run <code>rake db:create</code> to create your database. If you're not using SQLite (the default), edit <span class="filename">config/database.yml</span> with your username and password.</p>
-            </li>
-          </ol>
-        </div>
-      </div>
-
-      <div id="footer">&nbsp;</div>
-    </div>
-  </body>
-</html>
+<p>Where chart_object_js is a <a href="/nicolaasnel/highchart-image-api/blob/master/spec/fixtures/input.json">string value</a> that can be passed into the Highcharts.Chart constructor.</p>
