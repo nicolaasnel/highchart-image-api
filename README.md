@@ -34,12 +34,12 @@ rails server
 Generate a chart using curl
 ```bash
 HIGHCHART_OBJECT=`cat ./spec/fixtures/input.json`
-curl -X POST -d "input=$HIGHCHART_OBJECT" http://localhost:3000/chart_images -o ./chart.png
+curl -X POST -d "input=$HIGHCHART_OBJECT" http://localhost:3000/highchartsapi/chart_images -o ./chart.png
 ```
 
 Or optionally with width:
 ```bash
-curl -X POST -d "input=$HIGHCHART_OBJECT&width=900" http://localhost:3000/chart_images -o ./chart.png
+curl -X POST -d "input=$HIGHCHART_OBJECT&width=900" http://localhost:3000/highchartsapi/chart_images -o ./chart.png
 ```
 
 ## Calling API from ruby
@@ -49,7 +49,7 @@ Using [httparty](https://github.com/jnunemaker/httparty):
 require 'httparty'
 
 chart_object_js = File.read('spec/fixtures/input.json')
-response = HTTParty.post('http://localhost:3000/chart_images', body: {input: chart_object_js, width:550})
+response = HTTParty.post('http://localhost:3000/highchartsapi/chart_images', body: {input: chart_object_js, width:550})
 File.open('./chart.png', 'wb'){ |file| file << response.body }
 ```
 
