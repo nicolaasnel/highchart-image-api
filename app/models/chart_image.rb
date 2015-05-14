@@ -19,8 +19,8 @@ class ChartImage
   end
 
   def close
-    file.close
-    infile.close
+    file.close!
+    infile.close!
   end
 
   private
@@ -31,7 +31,7 @@ class ChartImage
 
   def infile
     @infile ||= Tempfile.open(['infile', '.json']) do |out|
-      out.write input 
+      out.write input
       out
     end
   end

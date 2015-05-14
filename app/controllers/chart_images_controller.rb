@@ -1,6 +1,8 @@
 class ChartImagesController < ApplicationController
   def create
-    send_file chart_image.file_path
+    File.open(chart_image.file_path, 'r') do |f|
+        send_data f.read, type: "image/png"
+    end
     chart_image.close
   end
 
@@ -9,5 +11,5 @@ class ChartImagesController < ApplicationController
   def chart_image
     @chart_image ||= ChartImage.new(input: params[:input], width: params[:width])
   end
-  
+
 end
